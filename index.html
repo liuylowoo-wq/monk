@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MONK'S QUEST</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="game-shell">
+      <section class="game-frame" aria-label="Glyphbound game">
+        <canvas id="game" width="960" height="540"></canvas>
+
+        <section class="start-menu" id="startMenu">
+          <div class="menu-art" aria-hidden="true">
+            <span class="px-cloud px-c1"></span>
+            <span class="px-cloud px-c2"></span>
+            <span class="px-mountains far"></span>
+            <span class="px-mountains near"></span>
+            <span class="px-temple"></span>
+            <span class="px-water"></span>
+            <span class="px-path"></span>
+            <span class="px-monk"></span>
+            <span class="px-momo"></span>
+            <span class="px-light p1"></span>
+            <span class="px-light p2"></span>
+            <span class="px-light p3"></span>
+          </div>
+          <div class="menu-left">
+            <h1>
+              <span class="title-word">MONK'S</span>
+              <span class="title-divider" aria-hidden="true"></span>
+              <span class="title-word">QUEST</span>
+              <em>和尚的任务</em>
+            </h1>
+          </div>
+          <div class="menu-actions" id="mainMenuActions">
+            <button class="primary" id="newGameButton" type="button">NEW JOURNEY</button>
+            <button id="loadGameButton" type="button">LOAD SAVE</button>
+            <button id="settingsButton" type="button">SETTINGS</button>
+          </div>
+          <p class="menu-tagline">WORDS BUILD WORLD</p>
+          <div class="menu-panel" id="newSavePanel" hidden>
+            <h2>CREATE SAVE</h2>
+            <label for="saveNameInput">SAVE NAME</label>
+            <input id="saveNameInput" maxlength="16" placeholder="e.g. Little Monk" />
+            <div class="menu-row">
+              <button class="primary" id="confirmNewSave" type="button">BEGIN</button>
+              <button id="cancelNewSave" type="button">BACK</button>
+            </div>
+          </div>
+          <div class="menu-panel saves-panel" id="loadSavePanel" hidden>
+            <div class="panel-heading">
+              <h2>LOAD SAVE</h2>
+              <button id="newSaveFromList" type="button">+ NEW SAVE</button>
+            </div>
+            <div class="save-list" id="saveList"></div>
+            <button id="backToMainMenu" type="button">BACK TO MENU</button>
+          </div>
+          <div class="menu-panel settings-panel" id="settingsPanel" hidden>
+            <h2>SETTINGS</h2>
+            <div class="setting-row">
+              <span>MUSIC</span>
+              <button id="menuMusicToggle" type="button">TOGGLE MUSIC</button>
+            </div>
+            <div class="setting-row">
+              <span>DISPLAY</span>
+              <span>PIXEL SCALE: AUTO</span>
+            </div>
+            <button id="backFromSettings" type="button">BACK TO MENU</button>
+          </div>
+        </section>
+
+        <div class="hud top-left">
+          <strong id="heroName">Xiao Wu</strong>
+          <span class="chapter-pill" id="chapterPill">Chapter 1</span>
+          <div class="bars">
+            <span class="hp"><i id="hpBar"></i></span>
+            <span class="xp"><i id="xpBar"></i></span>
+          </div>
+          <span id="levelText">Lv. 1</span>
+          <span class="wallet-pill" id="walletText">◎ 0</span>
+        </div>
+
+        <div class="hud top-right">
+          <button id="chromeToggle" class="icon-button" type="button" aria-label="Hide UI">▲</button>
+          <button id="musicButton" type="button">Music</button>
+          <button id="mapButton" type="button">Map</button>
+          <button id="bagButton" type="button">Bag</button>
+          <button id="questButton" type="button">Quests</button>
+          <button id="saveButton" type="button">Save</button>
+          <button id="menuButton" type="button">Menu</button>
+        </div>
+
+        <aside class="panel quest-panel" id="questPanel" hidden>
+          <h2>Quest Log</h2>
+          <ul id="questList"></ul>
+        </aside>
+
+        <aside class="panel bag-panel" id="bagPanel" hidden>
+          <h2 class="bag-section-title">Spirit Collection</h2>
+          <div id="spiritGrid"></div>
+          <h2 class="bag-section-title codex-title">Pinyin Life</h2>
+          <div id="codexGrid" class="codex-grid"></div>
+        </aside>
+
+        <aside class="panel map-panel" id="mapPanel" hidden>
+          <div class="panel-heading">
+            <h2>World Map</h2>
+            <button id="closeMapPanel" type="button">Close</button>
+          </div>
+          <div class="world-map" id="worldMap"></div>
+        </aside>
+
+        <section class="dialogue" id="dialogue" hidden>
+          <div class="portrait" id="portrait" aria-hidden="true">
+            <span class="portrait-hair"></span>
+            <span class="portrait-face"></span>
+            <span class="portrait-eye left"></span>
+            <span class="portrait-eye right"></span>
+            <span class="portrait-mouth"></span>
+            <span class="portrait-mark"></span>
+          </div>
+          <div class="dialogue-copy">
+            <div class="speaker" id="speaker">Mei</div>
+            <p id="dialogueText"></p>
+          </div>
+          <button id="dialogueNext" type="button">Next</button>
+        </section>
+
+        <section class="battle" id="battle" hidden>
+          <div class="battle-stage">
+            <div>
+              <span class="battle-label">Xiao Wu</span>
+              <div class="battle-sprite hero-battle">人</div>
+            </div>
+            <div>
+              <span class="battle-label" id="enemyName">Hollow Word</span>
+              <span class="enemy-hp"><i id="enemyHpBar"></i></span>
+              <div class="battle-sprite enemy-battle" id="enemyGlyph">忘</div>
+            </div>
+          </div>
+          <div class="battle-menu">
+            <div>
+              <strong id="skillName">火焰攻击</strong>
+              <span class="reward-pill" id="rewardText">+0 coins</span>
+              <p id="skillPrompt">Choose the pinyin that powers this skill.</p>
+            </div>
+            <div class="battle-options" id="battleOptions"></div>
+          </div>
+        </section>
+
+        <section class="panel momo-picker" id="momoPicker" hidden>
+          <h2>Choose Momo</h2>
+          <div class="momo-options" id="momoColorOptions">
+            <button type="button" data-color="black">
+              <span class="momo-swatch black"></span>
+              Black Momo
+            </button>
+            <button type="button" data-color="yellow">
+              <span class="momo-swatch yellow"></span>
+              Yellow Momo
+            </button>
+            <button type="button" data-color="blue">
+              <span class="momo-swatch blue"></span>
+              Blue Momo
+            </button>
+          </div>
+        </section>
+
+        <section class="panel pinyin-panel" id="pinyinPanel" hidden>
+          <div class="panel-heading">
+            <h2 id="pinyinTitle">Pinyin Valley</h2>
+            <button id="closePinyinPanel" type="button">Close</button>
+          </div>
+          <div class="pinyin-card">
+            <span id="pinyinStage">Lesson</span>
+            <strong id="pinyinCardTitle">Initials</strong>
+            <p id="pinyinCardText"></p>
+          </div>
+          <p class="pinyin-prompt" id="pinyinPrompt"></p>
+          <div class="pinyin-options" id="pinyinOptions"></div>
+          <p class="pinyin-feedback" id="pinyinFeedback"></p>
+        </section>
+
+        <div class="toast" id="toast" hidden></div>
+        <div class="chapter-card" id="chapterCard" hidden>
+          <span id="chapterKicker">Chapter 1</span>
+          <strong id="chapterTitle">The Bell That Forgot</strong>
+        </div>
+        <div class="screen-fade" id="screenFade" hidden>The cloud carries you to Cloud Lake...</div>
+      </section>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>
