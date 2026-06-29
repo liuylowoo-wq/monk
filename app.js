@@ -10,6 +10,7 @@ const CLOUD_RIDE_COST = 100;
 const PINYIN_STREAM = { start: 4020, end: 4700, surfaceY: 414, height: 86 };
 const CLOUD_LAKE = { start: 5200, end: 6800, waterStart: 5480, waterEnd: 6620, surfaceY: 340, height: 170 };
 const FISHING_SPOT = { x: 5428, y: 358 };
+const LAKE_HOME = { x: 6660, y: 338, doorX: 6660, doorY: 394 };
 const keys = new Set();
 let frame = 0;
 let music = null;
@@ -279,6 +280,12 @@ const quests = [
     title: "Fish at Cloud Lake",
     objective: "Sit by the lakeside chair and press Space to fish up lake words.",
     done: false
+  },
+  {
+    id: "buildLakeHome",
+    title: "Build a Lakeside Home",
+    objective: "Ride the cloud across Cloud Lake and inspect the empty house on the far shore.",
+    done: false
   }
 ];
 
@@ -525,6 +532,18 @@ const interactables = [
     lines: [
       { actor: "momo", expression: "thinking", text: "A soft cloud seal floats here. The character is 云." }
     ]
+  },
+  {
+    id: "lakeHome",
+    name: "Abandoned Lakeside House",
+    x: LAKE_HOME.x,
+    y: LAKE_HOME.y,
+    glyph: "⌂",
+    color: "#caa574",
+    action: "lakeHome",
+    lines: [
+      { actor: "momo", expression: "thinking", text: "An empty house by the lake. It looks forgotten, but the walls are still warm." }
+    ]
   }
 ];
 
@@ -759,6 +778,7 @@ const world = {
   pinyinLesson: null,
   lifeBurst: null,
   transition: null,
+  interior: null,
   fishing: null,
   valleyShopOpen: false,
   momoCheer: 0,
@@ -799,7 +819,9 @@ const world = {
       area: "valley",
       introSeen: false,
       catches: [],
-      fishingCount: 0
+      fishingCount: 0,
+      homeDiscovered: false,
+      homeBuilt: false
     },
     map: {
       discovered: ["monastery"]
@@ -952,7 +974,9 @@ function ensureChapterTwoDefaults() {
     area: player.x >= CLOUD_LAKE.start ? "lake" : lakeArea,
     introSeen: Boolean(world.chapter.lake.introSeen),
     catches: Array.isArray(world.chapter.lake.catches) ? world.chapter.lake.catches : [],
-    fishingCount: Number(world.chapter.lake.fishingCount) || 0
+    fishingCount: Number(world.chapter.lake.fishingCount) || 0,
+    homeDiscovered: Boolean(world.chapter.lake.homeDiscovered),
+    homeBuilt: Boolean(world.chapter.lake.homeBuilt)
   };
   if (!world.chapter.map) world.chapter.map = {};
   if (!Array.isArray(world.chapter.map.discovered)) world.chapter.map.discovered = ["monastery"];
@@ -1232,6 +1256,20 @@ function completeQuest(id) {
   return false;
 }
 
+function isQuestDone(id) {
+  return Boolean(quests.find((item) => item.id === id)?.done);
+}
+
+function isLakeFishingComplete() {
+  const lakeCatchCount = world.chapter.lake?.catches?.filter((id) => id !== "worm").length || 0;
+  return isQuestDone("lakeFishing") || lakeCatchCount >= 4;
+}
+
+function isLakeHomeAvailable() {
+  ensureChapterTwoDefaults();
+  return Boolean(world.chapter.lake.unlocked && world.chapter.lake.area === "lake" && isLakeFishingComplete());
+}
+
 function hasFiveElements() {
   return ["jin", "mu", "shui", "huo", "tu"].every((id) => player.spirits.includes(id));
 }
@@ -1254,7 +1292,9 @@ function visibleQuests() {
   if (!world.chapter.pinyin.bossUnlocked) return quests.filter((quest) => ["restoreVoices"].includes(quest.id));
   if (!world.chapter.pinyin.bossDefeated) return quests.filter((quest) => ["silentShadow"].includes(quest.id));
   if (!world.chapter.lake?.unlocked) return quests.filter((quest) => ["enterCloudLake"].includes(quest.id));
-  return quests.filter((quest) => ["lakeFishing"].includes(quest.id));
+  if (!isLakeFishingComplete()) return quests.filter((quest) => ["lakeFishing"].includes(quest.id));
+  if (!world.chapter.lake?.homeBuilt) return quests.filter((quest) => ["buildLakeHome"].includes(quest.id));
+  return quests.filter((quest) => ["buildLakeHome"].includes(quest.id));
 }
 
 function visibleNpcs() {
@@ -1279,6 +1319,7 @@ function visibleInteractables() {
       ensureChapterTwoDefaults();
       return world.chapter.pinyin.bossDefeated;
     }
+    if (item.id === "lakeHome") return isLakeHomeAvailable();
     return false;
   });
 }
@@ -1637,6 +1678,10 @@ function interact() {
     else renderDialogue();
     return;
   }
+  if (world.interior) {
+    interactInterior();
+    return;
+  }
 
   const playerBox = { x: player.x, y: player.y, w: player.w, h: player.h };
   const npc = visibleNpcs().find((item) => {
@@ -1702,6 +1747,10 @@ function interact() {
     }
     if (object.action === "cloudSkill") {
       startCloudSealDialogue();
+      return;
+    }
+    if (object.action === "lakeHome") {
+      startLakeHomeInteraction();
       return;
     }
     if (object.action === "incident") {
@@ -1975,7 +2024,137 @@ function updateScreenFade() {
 
 function getTransitionMessage() {
   if (world.transition?.type === "lakeExit") return "The cloud carries you back to Pinyin Valley...";
+  if (world.transition?.type === "enterHome") return "Stepping inside the lakeside house...";
+  if (world.transition?.type === "exitHome") return "Returning to Cloud Lake...";
   return "The cloud carries you to Cloud Lake...";
+}
+
+function startInteriorTransition(type, onMove) {
+  if (world.transition) return;
+  world.transition = {
+    type,
+    timer: 0,
+    duration: 110,
+    moveAt: 55,
+    moved: false,
+    onMove
+  };
+  world.activeDialogue = null;
+  els.dialogue.hidden = true;
+  player.vx = 0;
+  player.moving = false;
+}
+
+function enterLakeHome() {
+  ensureChapterTwoDefaults();
+  if (!isLakeHomeAvailable()) return;
+  world.chapter.lake.homeDiscovered = true;
+  world.chapter.lake.homeBuilt = true;
+  completeQuest("buildLakeHome");
+  startInteriorTransition("enterHome", () => {
+    world.interior = {
+      id: "lakeHome",
+      title: "Lakeside Home",
+      playerX: 480,
+      playerY: 394,
+      facing: "up"
+    };
+    player.cloudRiding = false;
+    saveGame({ quiet: true });
+  });
+}
+
+function exitInterior() {
+  if (!world.interior) return;
+  startInteriorTransition("exitHome", () => {
+    world.interior = null;
+    world.chapter.lake.area = "lake";
+    player.x = LAKE_HOME.doorX;
+    player.y = 352;
+    player.facing = -1;
+    player.cloudRiding = false;
+    world.cameraX = clamp(player.x - canvas.width * 0.42, 0, world.width - canvas.width);
+    saveGame({ quiet: true });
+  });
+}
+
+function startLakeHomeInteraction() {
+  ensureChapterTwoDefaults();
+  if (!world.chapter.lake.homeDiscovered) {
+    startDialogue({
+      actor: "momo",
+      onClose: enterLakeHome,
+      lines: [
+        { actor: "momo", expression: "thinking", text: "Look, Xiao Wu. There is an empty house by the lake." },
+        { actor: "momo", expression: "happy", text: "Maybe this can become our home between journeys." },
+        { actor: "narrator", expression: "thinking", text: "The quiet house opens. A new kind of space waits inside." }
+      ]
+    });
+    return;
+  }
+  enterLakeHome();
+}
+
+function homeDoorOpenRatio(surface) {
+  const transition = world.transition;
+  if (!transition || !["enterHome", "exitHome"].includes(transition.type)) return 0;
+  const moveAt = transition.moveAt || transition.duration / 2;
+  if (transition.type === "enterHome") {
+    if (surface === "exterior" && !transition.moved) return clamp(transition.timer / moveAt, 0, 1);
+    if (surface === "interior" && transition.moved) return clamp(1 - (transition.timer - moveAt) / (transition.duration - moveAt), 0, 1);
+  }
+  if (transition.type === "exitHome") {
+    if (surface === "interior" && !transition.moved) return clamp(transition.timer / moveAt, 0, 1);
+    if (surface === "exterior" && transition.moved) return clamp(1 - (transition.timer - moveAt) / (transition.duration - moveAt), 0, 1);
+  }
+  return 0;
+}
+
+function interactInterior() {
+  if (!world.interior) return;
+  const p = { x: world.interior.playerX, y: world.interior.playerY };
+  if (p.y > 428 && p.x > 412 && p.x < 548) {
+    exitInterior();
+    return;
+  }
+  const spots = [
+    {
+      id: "homeBed",
+      x: 172,
+      y: 334,
+      r: 84,
+      lines: [
+        { actor: "narrator", expression: "thinking", text: "A simple bed. The lake wind makes the blanket smell faintly of rain." },
+        { actor: "momo", expression: "happy", text: "This feels like a good place to rest between lessons." }
+      ]
+    },
+    {
+      id: "homeDesk",
+      x: 734,
+      y: 330,
+      r: 92,
+      lines: [
+        { actor: "narrator", expression: "thinking", text: "A low writing desk waits by the wall. There is room for new character notes." },
+        { actor: "momo", expression: "thinking", text: "Later, we can turn this into a study corner." }
+      ]
+    },
+    {
+      id: "homeWaterBowl",
+      x: 456,
+      y: 286,
+      r: 72,
+      lines: [
+        { actor: "narrator", expression: "thinking", text: "A clear bowl reflects the lake outside." },
+        { actor: "momo", expression: "happy", text: "The fish words we learned seem brighter here." }
+      ]
+    }
+  ];
+  const spot = spots.find((item) => Math.hypot(p.x - item.x, p.y - item.y) < item.r);
+  if (spot) {
+    startDialogue({ actor: "momo", lines: spot.lines });
+    return;
+  }
+  showToast("This house is quiet. There is room to build more.");
 }
 
 function startPinyinBoss() {
@@ -2113,6 +2292,10 @@ function unlockCloudRide() {
 
 function handleCloudRideKey() {
   if (world.activeDialogue || world.battle || world.challenge || world.momoPicker || world.pinyinLesson || world.valleyShopOpen) return;
+  if (world.interior) {
+    showToast("The cloud waits outside.");
+    return;
+  }
   ensureChapterTwoDefaults();
   ensurePlayerSkillDefaults();
 
@@ -2631,6 +2814,13 @@ function createSaveData() {
     version: SAVE_VERSION,
     player,
     chapter: world.chapter,
+    interior: world.interior ? {
+      id: world.interior.id,
+      title: world.interior.title,
+      playerX: world.interior.playerX,
+      playerY: world.interior.playerY,
+      facing: world.interior.facing
+    } : null,
     inspected: Array.from(world.inspected),
     quests,
     pickups: pickups.map(({ id, collected }) => ({ id, collected })),
@@ -2648,6 +2838,7 @@ function resetGameState() {
   world.pinyinLesson = null;
   world.lifeBurst = null;
   world.transition = null;
+  world.interior = null;
   world.fishing = null;
   world.valleyShopOpen = false;
   world.momoCheer = 0;
@@ -2695,7 +2886,8 @@ function getProgressPercent(chapter = world.chapter) {
     chapter.pinyin?.bossUnlocked,
     chapter.pinyin?.bossDefeated,
     chapter.lake?.unlocked,
-    lakeCatchCount >= 2
+    lakeCatchCount >= 2,
+    chapter.lake?.homeBuilt
   ];
   return Math.round((flags.filter(Boolean).length / flags.length) * 100);
 }
@@ -2706,6 +2898,7 @@ function getDisplayChapter(chapter = world.chapter) {
 }
 
 function getLocationName(data = { player, chapter: world.chapter }) {
+  if (data.interior?.id === "lakeHome") return "Lakeside Home";
   if (data.chapter?.lake?.area === "lake" || data.player?.x >= CLOUD_LAKE.start) return "Cloud Lake";
   if (data.chapter?.pinyin?.bossDefeated) return "Restored Pinyin Valley";
   if (data.chapter?.pinyin?.introSeen || data.player?.x > 3600) return "Pinyin Valley";
@@ -2771,6 +2964,13 @@ function loadGame(slotId = currentSlotId) {
     world.chapter.lanternsLit = 0;
     world.chapter.incidentStarted = false;
     world.chapter.bossUnlocked = false;
+    world.interior = data.interior?.id === "lakeHome" ? {
+      id: "lakeHome",
+      title: "Lakeside Home",
+      playerX: clamp(Number(data.interior.playerX) || 480, 96, 864),
+      playerY: clamp(Number(data.interior.playerY) || 394, 122, 460),
+      facing: data.interior.facing || "up"
+    } : null;
     ensureChapterTwoDefaults();
     ensurePlayerSkillDefaults();
     if (world.chapter.pinyin?.introSeen && world.chapter.scene > 2) world.chapter.scene = 2;
@@ -2978,7 +3178,7 @@ function returnToStartMenu() {
 function createNewSave() {
   const name = els.saveNameInput.value.trim() || "New Journey";
   resetGameState();
-  currentSlotId = `slot-${Date.now()}`;
+  currentSlotId = `slot-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const now = new Date().toISOString();
   const data = createSaveData();
   localStorage.setItem(slotKey(currentSlotId), JSON.stringify(data));
@@ -2999,9 +3199,73 @@ function createNewSave() {
   enterGame(currentSlotId);
 }
 
+function rectsOverlap(a, b) {
+  return a.x < b.x + b.w &&
+    a.x + a.w > b.x &&
+    a.y < b.y + b.h &&
+    a.y + a.h > b.y;
+}
+
+function interiorPlayerBox(x = world.interior?.playerX || 0, y = world.interior?.playerY || 0) {
+  return { x: x - 14, y: y - 28, w: 28, h: 34 };
+}
+
+function lakeHomeCollisionRects() {
+  return [
+    { x: 112, y: 132, w: 134, h: 58 },
+    { x: 118, y: 314, w: 170, h: 78 },
+    { x: 668, y: 318, w: 152, h: 66 },
+    { x: 408, y: 260, w: 100, h: 56 }
+  ];
+}
+
+function updateInterior() {
+  if (!world.interior) return;
+  const left = keys.has("ArrowLeft") || keys.has("a");
+  const right = keys.has("ArrowRight") || keys.has("d");
+  const up = keys.has("ArrowUp") || keys.has("w");
+  const down = keys.has("ArrowDown") || keys.has("s");
+  const speed = 2.7;
+  let dx = 0;
+  let dy = 0;
+  if (left) dx -= speed;
+  if (right) dx += speed;
+  if (up) dy -= speed;
+  if (down) dy += speed;
+  if (dx && dy) {
+    dx *= 0.72;
+    dy *= 0.72;
+  }
+  if (Math.abs(dx) > Math.abs(dy)) world.interior.facing = dx > 0 ? "right" : "left";
+  else if (dy) world.interior.facing = dy > 0 ? "down" : "up";
+
+  const tryMove = (axis, delta) => {
+    if (!delta) return;
+    const nextX = axis === "x" ? world.interior.playerX + delta : world.interior.playerX;
+    const nextY = axis === "y" ? world.interior.playerY + delta : world.interior.playerY;
+    const nextBox = interiorPlayerBox(nextX, nextY);
+    const insideRoom = nextBox.x >= 72 && nextBox.x + nextBox.w <= 888 && nextBox.y >= 78 && nextBox.y + nextBox.h <= 476;
+    const blocked = lakeHomeCollisionRects().some((rect) => rectsOverlap(nextBox, rect));
+    if (insideRoom && !blocked) {
+      world.interior.playerX = nextX;
+      world.interior.playerY = nextY;
+    }
+  };
+
+  tryMove("x", dx);
+  tryMove("y", dy);
+  player.moving = Boolean(dx || dy);
+  if (world.interior.playerY > 454 && world.interior.playerX > 426 && world.interior.playerX < 534) {
+    exitInterior();
+  }
+}
+
 function update() {
   const inputLocked = world.transition || world.fishing?.state === "waiting";
   if (!world.menuOpen && !inputLocked && !world.activeDialogue && !world.battle && !world.momoPicker && !world.pinyinLesson && !world.valleyShopOpen) {
+    if (world.interior) {
+      updateInterior();
+    } else {
     const left = keys.has("ArrowLeft") || keys.has("a");
     const right = keys.has("ArrowRight") || keys.has("d");
     const swimming = isPlayerSwimming();
@@ -3039,8 +3303,10 @@ function update() {
         showToast("Press J to ride the cloud to Cloud Lake.");
       }
     }
-    if (world.chapter.lake?.unlocked && world.chapter.lake.area === "lake" && !player.cloudRiding && player.x + player.w > CLOUD_LAKE.waterStart - 8) {
-      player.x = CLOUD_LAKE.waterStart - player.w - 8;
+    if (world.chapter.lake?.unlocked && world.chapter.lake.area === "lake" && !player.cloudRiding && player.x + player.w > CLOUD_LAKE.waterStart - 8 && player.x < CLOUD_LAKE.waterEnd - 12) {
+      player.x = player.vx < 0 && player.x > CLOUD_LAKE.waterStart
+        ? CLOUD_LAKE.waterEnd + 12
+        : CLOUD_LAKE.waterStart - player.w - 8;
       player.vx = 0;
       player.moving = false;
       startLakeCloudHint();
@@ -3056,15 +3322,17 @@ function update() {
 
     const nearbyEnemy = enemies.find((item) => !item.hidden && !item.defeated && Math.abs(player.x - item.x) < 34);
     if (nearbyEnemy) startBattle(nearbyEnemy);
+    }
   }
   world.time += 0.002;
   frame += 1;
 
   if (world.transition) {
     world.transition.timer += 1;
-    if (!world.transition.moved && world.transition.timer >= 70) {
+    if (!world.transition.moved && world.transition.timer >= (world.transition.moveAt || 70)) {
       world.transition.moved = true;
-      if (world.transition.type === "lakeExit") finishLakeExitTransition();
+      if (world.transition.onMove) world.transition.onMove();
+      else if (world.transition.type === "lakeExit") finishLakeExitTransition();
       else finishCloudLakeTransition();
     }
     if (world.transition.timer >= world.transition.duration) {
@@ -3105,11 +3373,30 @@ function drawRect(x, y, w, h, color) {
   ctx.fillRect(Math.round(x - world.cameraX), Math.round(y), w, h);
 }
 
+function drawScreenRect(x, y, w, h, color) {
+  ctx.fillStyle = color;
+  ctx.fillRect(Math.round(x), Math.round(y), w, h);
+}
+
 function drawText(text, x, y, size = 18, color = "#172033") {
   ctx.fillStyle = color;
   ctx.font = `${size}px ui-monospace, monospace`;
   ctx.textAlign = "center";
   ctx.fillText(text, Math.round(x - world.cameraX), Math.round(y));
+}
+
+function drawScreenText(text, x, y, size = 18, color = "#172033") {
+  ctx.fillStyle = color;
+  ctx.font = `${size}px ui-monospace, monospace`;
+  ctx.textAlign = "center";
+  ctx.fillText(text, Math.round(x), Math.round(y));
+}
+
+function drawScreenCircle(x, y, radius, color) {
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(Math.round(x), Math.round(y), radius, 0, Math.PI * 2);
+  ctx.fill();
 }
 
 function drawCircle(x, y, radius, color) {
@@ -3317,6 +3604,31 @@ function drawCloudLake() {
   drawLakeCreatureIcon(lakeCatches[2], 5940 + Math.sin(frame / 38) * 30, 410 + Math.sin(frame / 18) * 5, 0.75);
   drawLakeCreatureIcon(lakeCatches[3], 6240 + Math.sin(frame / 44) * 36, 386 + Math.cos(frame / 18) * 5, 0.75);
   drawLakeCreatureIcon(lakeCatches[4], 6420 + Math.sin(frame / 52) * 22, 438, 0.75);
+  if (isLakeHomeAvailable()) drawLakeHomeExterior();
+}
+
+function drawLakeHomeExterior() {
+  const x = LAKE_HOME.x;
+  const y = 420;
+  const built = world.chapter.lake?.homeBuilt;
+  const doorOpen = homeDoorOpenRatio("exterior");
+  drawEllipse(x, y + 2, 96, 8, "rgba(23,27,43,0.13)");
+  drawRect(x - 86, y - 104, 172, 104, built ? "#caa574" : "#a9896b");
+  drawRect(x - 102, y - 132, 204, 34, "#6a4b2b");
+  drawRect(x - 84, y - 148, 168, 24, built ? "#8a5b39" : "#6f5a4d");
+  drawRect(x - 30, y - 60, 52, 60, "#1b2534");
+  drawRect(x - 24 - doorOpen * 26, y - 52, Math.max(12, 40 - doorOpen * 24), 52, "#5f3d2b");
+  drawRect(x - 18 - doorOpen * 26, y - 30, 5, 5, "#d8b16a");
+  drawRect(x + 42, y - 76, 30, 28, "#fff7d7");
+  drawRect(x + 48, y - 70, 18, 16, "#b8e5ff");
+  drawRect(x - 66, y - 78, 30, 28, "#fff7d7");
+  drawRect(x - 60, y - 72, 18, 16, "#b8e5ff");
+  drawText(built ? "HOME" : "EMPTY", x, y - 114, 16, "#fff7d7");
+  drawRect(x - 92, y - 8, 184, 8, "#6a4b2b");
+  if (!built) {
+    drawRect(x - 78, y - 92, 18, 5, "#6f5a4d");
+    drawRect(x + 54, y - 28, 16, 5, "#6f5a4d");
+  }
 }
 
 function pinyinBossHealthRatio() {
@@ -3578,7 +3890,7 @@ function drawNpcProp(npc, x, y, style, activity) {
 
 function drawInteractable(item) {
   if (item.festivalOnly && !isFestivalActive()) return;
-  if (["pinyinGate", "voiceBell", "silentShadowGate", "cloudSeal"].includes(item.id)) return;
+  if (["pinyinGate", "voiceBell", "silentShadowGate", "cloudSeal", "lakeHome"].includes(item.id)) return;
   const bob = item.action === "incident" && world.chapter.bossUnlocked ? Math.sin(frame / 8) * 6 : 0;
   drawOutlinedRect(item.x, item.y - 24 + bob, 44, 48, item.color);
   drawText(item.glyph, item.x + 22, item.y + 8 + bob, 21, "#fff7d7");
@@ -3720,6 +4032,92 @@ function drawFishingCatchCard() {
   drawText(caught.english, x, y + 52, 12, "#6a4b2b");
 }
 
+function drawInteriorPlayer() {
+  const x = world.interior.playerX;
+  const y = world.interior.playerY;
+  const step = player.moving ? Math.sin(frame / 5) * 4 : 0;
+  drawScreenRect(x - 14, y + 14, 8, 18 + step, "#3b2a24");
+  drawScreenRect(x + 6, y + 14, 8, 18 - step, "#3b2a24");
+  drawScreenRect(x - 16, y - 32, 32, 32, "#171b2b");
+  drawScreenRect(x - 12, y - 28, 24, 26, "#f1c0a0");
+  drawScreenRect(x - 18, y - 2, 36, 42, "#c85f32");
+  drawScreenRect(x - 11, y, 11, 38, "#f1c550");
+  drawScreenRect(x - 8, y - 18, 5, 5, "#171b2b");
+  drawScreenRect(x + 5, y - 18, 5, 5, "#171b2b");
+  drawScreenText("武", x, y + 31, 14, "#fff7d7");
+}
+
+function drawInteriorMomo() {
+  if (!world.chapter.companionJoined) return;
+  const style = momoColors[player.momoColor] || momoColors.black;
+  const x = world.interior.playerX - 44;
+  const y = world.interior.playerY + 16 + Math.sin(frame / 18) * 4;
+  drawScreenRect(x - 4, y + 28, 40, 7, "rgba(23,27,43,0.18)");
+  drawScreenRect(x, y, 34, 30, "#171b2b");
+  drawScreenRect(x + 4, y + 4, 26, 22, style.body);
+  drawScreenRect(x + 7, y + 8, 6, 6, style.eye);
+  drawScreenRect(x + 21, y + 8, 6, 6, style.eye);
+  drawScreenRect(x + 12, y + 18, 10, 3, style.eye);
+  drawScreenText("墨", x + 17, y + 50, 14, style.glyph);
+}
+
+function drawLakeHomeInterior() {
+  const doorOpen = homeDoorOpenRatio("interior");
+  drawScreenRect(0, 0, canvas.width, canvas.height, "#1b2534");
+  drawScreenRect(64, 52, 832, 448, "#eef2eb");
+  drawScreenRect(64, 52, 832, 58, "#cfd6d5");
+  drawScreenRect(64, 110, 832, 14, "#8d99ae");
+  drawScreenRect(64, 484, 832, 16, "#171b2b");
+  drawScreenRect(64, 52, 16, 448, "#171b2b");
+  drawScreenRect(880, 52, 16, 448, "#171b2b");
+
+  for (let x = 80; x < 880; x += 48) {
+    for (let y = 122; y < 484; y += 48) {
+      drawScreenRect(x, y, 46, 46, "#dce6e2");
+      drawScreenRect(x, y, 46, 2, "#f8fbf7");
+      drawScreenRect(x, y + 44, 46, 2, "#c2cdcf");
+    }
+  }
+
+  drawScreenText("Lakeside Home", 480, 88, 20, "#172033");
+
+  drawScreenRect(430, 452, 100, 32, "#1b2534");
+  drawScreenRect(448, 444, 64, 40, "#75a8bf");
+  drawScreenRect(448 - doorOpen * 34, 444, Math.max(14, 64 - doorOpen * 38), 40, "#5f3d2b");
+  drawScreenRect(500 - doorOpen * 18, 462, 5, 5, "#d8b16a");
+  drawScreenText("EXIT", 480, 474, 12, "#fff7d7");
+
+  drawScreenRect(118, 314, 170, 78, "#7c8aa0");
+  drawScreenRect(132, 328, 142, 46, "#d8eef5");
+  drawScreenRect(132, 328, 46, 46, "#fff7d7");
+  drawScreenText("Rest", 204, 410, 13, "#5f3d2b");
+
+  drawScreenRect(668, 318, 152, 66, "#8a5b39");
+  drawScreenRect(682, 330, 124, 34, "#d8b16a");
+  drawScreenRect(706, 338, 62, 8, "#fff7d7");
+  drawScreenText("Study", 744, 404, 13, "#5f3d2b");
+
+  drawScreenRect(112, 132, 134, 58, "#b89460");
+  drawScreenRect(128, 144, 102, 34, "#fff7d7");
+  drawScreenText("Storage", 180, 208, 13, "#5f3d2b");
+
+  drawScreenRect(408, 260, 100, 56, "#8d99ae");
+  drawScreenRect(424, 272, 68, 28, "#b8e5ff");
+  drawScreenCircle(442 + Math.sin(frame / 12) * 8, 286, 4, "#2f8fd8");
+  drawScreenCircle(468 + Math.cos(frame / 16) * 6, 288, 3, "#75a8bf");
+
+  drawScreenRect(342, 166, 90, 58, "rgba(216,177,106,0.28)");
+  drawScreenRect(548, 166, 90, 58, "rgba(216,177,106,0.28)");
+  drawScreenRect(344, 168, 86, 4, "rgba(95,61,43,0.2)");
+  drawScreenRect(550, 168, 86, 4, "rgba(95,61,43,0.2)");
+  drawScreenText("Future furniture", 480, 238, 12, "#6a4b2b");
+
+  drawScreenText("Press Space / Enter by the door to leave", 480, 526, 14, "#fff7d7");
+
+  drawInteriorMomo();
+  drawInteriorPlayer();
+}
+
 function isFishingPoseActive() {
   return Boolean(world.fishing || isNearFishingSpot() && world.chapter.lake?.unlocked && Math.abs(player.x - FISHING_SPOT.x) < 34);
 }
@@ -3820,6 +4218,17 @@ function drawWeather() {
 
 function drawInteractionHint() {
   if (world.activeDialogue || world.battle || world.challenge) return;
+  if (world.interior) {
+    const p = { x: world.interior.playerX, y: world.interior.playerY };
+    const nearDoor = p.y > 428 && p.x > 412 && p.x < 548;
+    const nearSpot = [
+      { x: 172, y: 334, r: 84 },
+      { x: 734, y: 330, r: 92 },
+      { x: 456, y: 286, r: 72 }
+    ].some((spot) => Math.hypot(p.x - spot.x, p.y - spot.y) < spot.r);
+    if (nearDoor || nearSpot) drawScreenText("!", world.interior.playerX, world.interior.playerY - 54, 26, "#f1c550");
+    return;
+  }
   const box = { x: player.x, y: player.y, w: player.w, h: player.h };
   const nearNpc = visibleNpcs().some((npc) => {
     const pos = npc._pose || npc;
@@ -3859,6 +4268,13 @@ function draw() {
   if (world.shake > 0) {
     ctx.translate((Math.random() - 0.5) * world.shake, (Math.random() - 0.5) * world.shake);
   }
+  if (world.interior?.id === "lakeHome") {
+    drawLakeHomeInterior();
+    drawInteractionHint();
+    ctx.restore();
+    drawTransitionOverlay();
+    return;
+  }
   drawBackground();
   drawBuildings();
   visibleInteractables().forEach(drawInteractable);
@@ -3888,7 +4304,7 @@ document.addEventListener("keydown", (event) => {
     event.preventDefault();
     handleCloudRideKey();
   }
-  if (["ArrowLeft", "ArrowRight", "a", "d"].includes(event.key)) keys.add(event.key);
+  if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "a", "d", "w", "s"].includes(event.key)) keys.add(event.key);
   if (event.key === " " && !event.repeat && !world.activeDialogue && !world.transition && !world.fishing && isNearFishingSpot()) {
     event.preventDefault();
     startFishing();
