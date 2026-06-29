@@ -201,91 +201,91 @@ const quests = [
   {
     id: "buyMomo",
     title: "Visit Momo Mart",
-    objective: "Visit Momo Mart and wake the ink-spirit companion.",
+    objective: "Go to Momo Mart and wake the little ink spirit.",
     done: false
   },
   {
     id: "collectElements",
-    title: "Collect the Five Elements",
-    objective: "Gather 金, 木, 水, 火, and 土 to open the first chapter path.",
+    title: "Search the Village",
+    objective: "Look around Inkstone Village for anything unusual.",
     done: false
   },
   {
     id: "collectRen",
-    title: "Collect 人",
-    objective: "Rescue the first character spirit.",
+    title: "Found 人",
+    objective: "Keep the 人 spirit with you.",
     done: false
   },
   {
     id: "defeatForgotten",
-    title: "Defeat a Forgotten Word",
-    objective: "Use Chinese knowledge to strengthen a combat skill.",
+    title: "A Word Monster",
+    objective: "Defeat the monster blocking the bridge road.",
     done: false
   },
   {
     id: "openForest",
-    title: "Repair the Memory Bridge",
-    objective: "Use the five element spirits to repair the bridge.",
+    title: "Go to the Memory Bridge",
+    objective: "Bring the five elements to the old bridge.",
     done: false
   },
   {
     id: "enterForest",
-    title: "Enter the Element Forest",
-    objective: "Cross the bridge and find the corrupted word blocking the forest path.",
+    title: "Enter Wuxing Forest",
+    objective: "Cross the bridge and enter the forest.",
     done: false
   },
   {
     id: "festival",
-    title: "Cross Into Wuxing Forest",
-    objective: "Cross the bridge and continue toward Wuxing Forest.",
+    title: "Enter Wuxing Forest",
+    objective: "Keep moving east.",
     done: false
   },
   {
     id: "incident",
-    title: "Follow the Black Bell",
-    objective: "Investigate the sound from the sealed shrine.",
+    title: "The Bell Rings Again",
+    objective: "Check the sealed shrine.",
     done: false
   },
   {
     id: "chapterBoss",
     title: "Defeat the Bell Eater",
-    objective: "Use character spirits to protect Beginner Village.",
+    objective: "Stop the monster inside the shrine.",
     done: false
   },
   {
     id: "enterPinyinValley",
     title: "Enter Pinyin Valley",
-    objective: "Follow Momo beyond Wuxing Forest and listen for the lost voices.",
+    objective: "Leave Wuxing Forest and follow the quiet road.",
     done: false
   },
   {
     id: "restoreVoices",
-    title: "Restore Valley Voices",
-    objective: "Finish the small pinyin lessons for the silent villagers.",
+    title: "Release the Sealed Life",
+    objective: "Use pinyin to free the animals and plants.",
     done: false
   },
   {
     id: "silentShadow",
     title: "Cleanse Silent Shadow",
-    objective: "Review initials, finals, tones, and blending to return the valley's sound.",
+    objective: "Face the shadow at the end of the valley.",
     done: false
   },
   {
     id: "enterCloudLake",
     title: "Reach Cloud Lake",
-    objective: "Use 云 (yún, cloud) to reach the quiet lake beyond Pinyin Valley.",
+    objective: "Learn 云 and ride the cloud to the lake.",
     done: false
   },
   {
     id: "lakeFishing",
     title: "Fish at Cloud Lake",
-    objective: "Sit by the lakeside chair and press Space to fish up lake words.",
+    objective: "Sit by the chair and press Space to fish.",
     done: false
   },
   {
     id: "buildLakeHome",
-    title: "Build a Lakeside Home",
-    objective: "Ride the cloud across Cloud Lake and inspect the empty house on the far shore.",
+    title: "The Empty House",
+    objective: "Cross the lake and look at the house on the far shore.",
     done: false
   }
 ];
@@ -308,8 +308,8 @@ const npcs = [
       { start: 0, end: 1, x: 360, y: 356, activity: "read" }
     ],
     lines: [
-      { actor: "mei", expression: "thinking", text: "Xiao Wu, go to Momo Mart first." },
-      { actor: "mei", expression: "confident", text: "Wake Momo from the ink shelf. It can help read strange characters." }
+      { actor: "mei", expression: "thinking", text: "Go to Momo Mart." },
+      { actor: "mei", expression: "thinking", text: "Wake Momo, then come back." }
     ]
   },
   {
@@ -331,10 +331,10 @@ const npcs = [
       { start: 0.75, end: 1, x: 2585, y: 356, activity: "countCoins" }
     ],
     lines: [
-      { actor: "ayi", expression: "happy", text: "Every morning I buy noodles from the old woman near the bridge." },
-      { actor: "ayi", expression: "thinking", text: "She says the river remembers every word ever spoken." },
-      { actor: "momo", expression: "happy", text: "If the river remembers, it may know where the lost words drifted." },
-      { actor: "ayi", expression: "confident", text: "In this village, 买 means buy, 钱 means money. Learn both before the stalls start arguing." }
+      { actor: "ayi", expression: "happy", text: "You are the little monk from the temple?" },
+      { actor: "ayi", expression: "thinking", text: "The bell woke me up last night." },
+      { actor: "ayi", expression: "thinking", text: "Since then, the bridge has been closed." },
+      { actor: "momo", expression: "thinking", text: "So it started after the bell." }
     ]
   }
 ];
@@ -347,7 +347,7 @@ const pickups = [
     y: 370,
     collected: false,
     hint: "金",
-    line: "The 金 spirit rings like a tiny bell. 金 means metal."
+    line: "You found 金."
   },
   {
     id: "mu",
@@ -356,7 +356,7 @@ const pickups = [
     y: 342,
     collected: false,
     hint: "木",
-    line: "The 木 spirit rustles awake. 木 means wood."
+    line: "You found 木."
   },
   {
     id: "ren",
@@ -365,7 +365,7 @@ const pickups = [
     y: 370,
     collected: false,
     hint: "人",
-    line: "The 人 spirit joins you. 人 means person."
+    line: "You found 人."
   },
   {
     id: "shui",
@@ -374,7 +374,7 @@ const pickups = [
     y: 338,
     collected: false,
     hint: "水",
-    line: "The 水 spirit joins you. 水 means water."
+    line: "You found 水."
   },
   {
     id: "tu",
@@ -383,7 +383,7 @@ const pickups = [
     y: 370,
     collected: false,
     hint: "土",
-    line: "The 土 spirit settles into your palm. 土 means earth."
+    line: "You found 土."
   },
   {
     id: "yue",
@@ -393,7 +393,7 @@ const pickups = [
     collected: false,
     hint: "月",
     secret: true,
-    line: "A hidden 月 spirit wakes under the old roof. 月 means moon."
+    line: "You found 月."
   }
 ];
 
@@ -406,8 +406,8 @@ const interactables = [
     glyph: "钟",
     color: "#8d99ae",
     lines: [
-      { actor: "lina", expression: "thinking", text: "The bell is split, but I can still hear something inside it." },
-      { actor: "momo", expression: "thinking", text: "It is not sound. It is meaning trying to remember its shape." }
+      { actor: "lina", expression: "thinking", text: "The bell is cracked." },
+      { actor: "momo", expression: "thinking", text: "It should not have rung last night." }
     ]
   },
   {
@@ -418,8 +418,8 @@ const interactables = [
     glyph: "井",
     color: "#405c86",
     lines: [
-      { actor: "narrator", expression: "thinking", text: "The old well reflects a sky with no clouds. Someone scratched 人 into the stone rim." },
-      { actor: "momo", expression: "surprised", text: "That is not a scratch. It is a footprint left by a character spirit." }
+      { actor: "narrator", expression: "thinking", text: "Something is scratched into the old well." },
+      { actor: "momo", expression: "surprised", text: "Wait. That is 人." }
     ]
   },
   {
@@ -431,7 +431,7 @@ const interactables = [
     color: "#111827",
     action: "buyMomo",
     lines: [
-      { actor: "narrator", expression: "thinking", text: "A handwritten sign reads: Momo Mart. Ink charms and travel goods." }
+      { actor: "narrator", expression: "thinking", text: "A handwritten sign reads: Momo Mart." }
     ]
   },
   {
@@ -443,7 +443,8 @@ const interactables = [
     color: "#7b5238",
     action: "bridgePuzzle",
     lines: [
-      { actor: "mei", expression: "thinking", text: "This bridge was built from names. It will not hold weight until the first three spirits remember each other." }
+      { actor: "momo", expression: "thinking", text: "Still asleep." },
+      { actor: "momo", expression: "thinking", text: "Looks like we are missing something." }
     ]
   },
   {
@@ -456,7 +457,7 @@ const interactables = [
     action: "lanternGame",
     festivalOnly: true,
     lines: [
-      { actor: "ayi", expression: "happy", text: "Each charm carries a village memory. Match the word, and the memory can rise." }
+      { actor: "ayi", expression: "happy", text: "These charms are old. Choose carefully." }
     ]
   },
   {
@@ -468,7 +469,7 @@ const interactables = [
     color: "#7756d8",
     action: "incident",
     lines: [
-      { actor: "momo", expression: "sad", text: "The shrine is humming in a language I do not want to understand." }
+      { actor: "momo", expression: "sad", text: "Something is inside." }
     ]
   },
   {
@@ -480,10 +481,10 @@ const interactables = [
     color: "#8d99ae",
     action: "forestShrine",
     lines: [
-      { actor: "momo", expression: "thinking", text: "This is the entrance to Wuxing Forest." },
-      { actor: "momo", expression: "confident", text: "The five spirits opened the bridge, but the forest path is still blocked by a corrupted word." },
-      { actor: "lina", expression: "thinking", text: "So we cross the bridge, find that corrupted word, and purify it?" },
-      { actor: "momo", expression: "happy", text: "Yes. I will help you read the signs on the path." }
+      { actor: "momo", expression: "thinking", text: "This is Wuxing Forest." },
+      { actor: "momo", expression: "thinking", text: "It is quieter than it should be." },
+      { actor: "lina", expression: "thinking", text: "Is that bad?" },
+      { actor: "momo", expression: "thinking", text: "Usually." }
     ]
   },
   {
@@ -495,7 +496,8 @@ const interactables = [
     color: "#5f8f74",
     action: "pinyinIntro",
     lines: [
-      { actor: "momo", expression: "thinking", text: "The forest opens into a very quiet valley." }
+      { actor: "momo", expression: "thinking", text: "There is a valley ahead." },
+      { actor: "momo", expression: "thinking", text: "I do not hear anything." }
     ]
   },
   {
@@ -519,7 +521,7 @@ const interactables = [
     color: "#65507a",
     action: "pinyinBoss",
     lines: [
-      { actor: "shadow", expression: "angry", text: "The valley does not need voices." }
+      { actor: "shadow", expression: "angry", text: "No more sound." }
     ]
   },
   {
@@ -531,7 +533,7 @@ const interactables = [
     color: "#fff7d7",
     action: "cloudSkill",
     lines: [
-      { actor: "momo", expression: "thinking", text: "A soft cloud seal floats here. The character is 云." }
+      { actor: "momo", expression: "thinking", text: "That character is 云." }
     ]
   },
   {
@@ -543,7 +545,7 @@ const interactables = [
     color: "#caa574",
     action: "lakeHome",
     lines: [
-      { actor: "momo", expression: "thinking", text: "An empty house by the lake. It looks forgotten, but the walls are still warm." }
+      { actor: "momo", expression: "thinking", text: "An empty house." }
     ]
   }
 ];
@@ -563,9 +565,8 @@ const villagers = [
     activity: "cook",
     sprite: { skin: "#d6a27f", hair: "#e5dfd0", coat: "#d77955", trim: "#fff7d7", pants: "#543b36", prop: "ladle" },
     lines: [
-      { actor: "linPo", expression: "happy", text: "Every morning I sell noodles to people who cannot remember the word for hunger." },
-      { actor: "linPo", expression: "sad", text: "They still smile after the first bite. Maybe taste remembers what words forget." },
-      { actor: "momo", expression: "thinking", text: "Food remembers what speech forgets." }
+      { actor: "linPo", expression: "happy", text: "Noodles are still hot." },
+      { actor: "linPo", expression: "thinking", text: "Good. At least the pot remembers its job." }
     ],
     schedule: [
       { start: 0, end: 1, x: 675, y: 356, activity: "cook" }
@@ -585,8 +586,8 @@ const villagers = [
     activity: "fish",
     sprite: { skin: "#c98a68", hair: "#253047", coat: "#2f8fd8", trim: "#c7e6ff", pants: "#263047", prop: "rod" },
     lines: [
-      { actor: "tao", expression: "thinking", text: "I keep paper boats in my pocket. Each one carries a word my sister forgot." },
-      { actor: "lina", expression: "sad", text: "I will bring one back if I can." }
+      { actor: "tao", expression: "thinking", text: "The river was loud last night." },
+      { actor: "tao", expression: "thinking", text: "Then the bridge stopped moving." }
     ],
     schedule: [
       { start: 0, end: 1, x: 960, y: 356, activity: "fish" }
@@ -606,8 +607,8 @@ const villagers = [
     activity: "kite",
     sprite: { skin: "#f1c0a0", hair: "#2b1e2c", coat: "#58c475", trim: "#f1c550", pants: "#405c86", prop: "kite" },
     lines: [
-      { actor: "an", expression: "thinking", text: "My kite is patched with 月. It only flies when the moon is hidden." },
-      { actor: "momo", expression: "happy", text: "The character still shines. She has kept it safe." }
+      { actor: "an", expression: "thinking", text: "I saw a character shining near the old roof." },
+      { actor: "an", expression: "thinking", text: "It looked like 月." }
     ],
     schedule: [
       { start: 0, end: 1, x: 360, y: 356, activity: "kite" }
@@ -627,8 +628,8 @@ const villagers = [
     activity: "guard",
     sprite: { skin: "#b9795f", hair: "#1c2234", coat: "#8d99ae", trim: "#f1c550", pants: "#253047", prop: "spear" },
     lines: [
-      { actor: "guard", expression: "confident", text: "I guard the bridge until it remembers the road." },
-      { actor: "guard", expression: "sad", text: "My daughter used to write 木 on every door. Said trees made houses less lonely." }
+      { actor: "guard", expression: "confident", text: "Bridge is closed." },
+      { actor: "guard", expression: "thinking", text: "I would open it if I could." }
     ],
     schedule: [
       { start: 0, end: 1, x: 1110, y: 356, activity: "guard" }
@@ -648,8 +649,8 @@ const villagers = [
     activity: "cook",
     sprite: { skin: "#d69a76", hair: "#fff7d7", coat: "#c85f32", trim: "#fff7d7", pants: "#543b36", prop: "pan" },
     lines: [
-      { actor: "chef", expression: "happy", text: "Soup tastes different when the right words are spoken over it." },
-      { actor: "chef", expression: "angry", text: "If the word for salt vanishes, the whole village will know." }
+      { actor: "chef", expression: "happy", text: "If the bridge opens, I am making soup." },
+      { actor: "chef", expression: "angry", text: "A big pot. For morale." }
     ],
     schedule: [
       { start: 0, end: 1, x: 805, y: 356, activity: "cook" }
@@ -1312,6 +1313,67 @@ function visibleNpcs() {
   return npcs.filter((npc) => npc.id === "mei");
 }
 
+function getMasterYunDialogue() {
+  if (!world.chapter.companionJoined) {
+    return {
+      actor: "mei",
+      lines: [
+        { actor: "mei", expression: "thinking", text: "Go to Momo Mart." },
+        { actor: "mei", expression: "thinking", text: "Wake the little ink spirit." },
+        { actor: "mei", expression: "thinking", text: "Then come back." }
+      ]
+    };
+  }
+  if (!hasFiveElements()) {
+    return {
+      actor: "mei",
+      lines: [
+        { actor: "mei", expression: "thinking", text: "Good." },
+        { actor: "mei", expression: "thinking", text: "Momo remembers things most people have forgotten." },
+        { actor: "momo", expression: "happy", text: "I remember everything." },
+        { actor: "momo", expression: "thinking", text: "Mostly." },
+        { actor: "mei", expression: "thinking", text: "The road ahead is blocked." },
+        { actor: "mei", expression: "thinking", text: "The Memory Bridge will not open." },
+        { actor: "lina", expression: "thinking", text: "Why?" },
+        { actor: "mei", expression: "thinking", text: "I do not know." },
+        { actor: "momo", expression: "thinking", text: "Maybe..." },
+        { actor: "momo", expression: "thinking", text: "it forgot something." },
+        { actor: "mei", expression: "thinking", text: "Your staff already carries 火." },
+        { actor: "mei", expression: "thinking", text: "Search around the village." },
+        { actor: "mei", expression: "thinking", text: "See if anything unusual appears." }
+      ]
+    };
+  }
+  if (!world.chapter.bridgeSolved) {
+    return {
+      actor: "mei",
+      lines: [
+        { actor: "mei", expression: "thinking", text: "金, 木, 水, 火, 土." },
+        { actor: "mei", expression: "thinking", text: "All five are together now." },
+        { actor: "mei", expression: "thinking", text: "Bring them to the Memory Bridge." },
+        { actor: "mei", expression: "thinking", text: "Let us see what happens." }
+      ]
+    };
+  }
+  if (!world.chapter.stageOneCleared) {
+    return {
+      actor: "mei",
+      lines: [
+        { actor: "mei", expression: "thinking", text: "Beyond this bridge is Wuxing Forest." },
+        { actor: "mei", expression: "thinking", text: "No one has entered since the bell rang." },
+        { actor: "mei", expression: "thinking", text: "Stay alert, Xiao Wu." }
+      ]
+    };
+  }
+  return {
+    actor: "mei",
+    lines: [
+      { actor: "mei", expression: "thinking", text: "Keep going." },
+      { actor: "mei", expression: "thinking", text: "The bell did not ring by accident." }
+    ]
+  };
+}
+
 function isFestivalActive() {
   return false;
 }
@@ -1356,15 +1418,17 @@ function clearStageOne() {
   world.chapter.pinyin.unlocked = true;
   world.chapter.scene = 2;
   completeQuest("enterForest");
-  showChapterCard("第一关通过", "五行林入口已净化");
+  showChapterCard("Chapter 1 Complete", "Wuxing Forest");
   showToast("Progress saved.");
   saveGame({ quiet: true });
   startDialogue({
     actor: "momo",
     lines: [
-      { actor: "momo", expression: "happy", text: "First gate clear. The forest path can breathe again." },
-      { actor: "lina", expression: "confident", text: "Then the next valley is real." },
-      { actor: "momo", expression: "thinking", text: "I saved our progress. We can return from here." }
+      { actor: "momo", expression: "thinking", text: "That was not a normal monster." },
+      { actor: "lina", expression: "thinking", text: "There are more?" },
+      { actor: "momo", expression: "thinking", text: "Probably." },
+      { actor: "momo", expression: "happy", text: "Good news: we are still alive." },
+      { actor: "momo", expression: "thinking", text: "The road ahead is open." }
     ]
   });
 }
@@ -1451,13 +1515,19 @@ function collectPickup(item) {
     completeQuest("collectElements");
     if (!world.chapter.chapterStarted) {
       world.chapter.chapterStarted = true;
-      showChapterCard("Chapter 1", "Five Elements, One Bell");
+      showChapterCard("Quest Updated", "Go to the Memory Bridge");
       startDialogue({
         actor: "mei",
         lines: [
-          { actor: "mei", expression: "thinking", text: "金木水火土. Five answers, one road." },
-          { actor: "momo", expression: "confident", text: "The first path is open. Stay close to the five spirits." },
-          { actor: "mei", expression: "confident", text: "Take the five elements to the Memory Bridge. If it accepts them, the forest path will open." }
+          { actor: "momo", expression: "thinking", text: "..." },
+          { actor: "momo", expression: "thinking", text: "Wait." },
+          { actor: "momo", expression: "thinking", text: "These are not random." },
+          { actor: "momo", expression: "thinking", text: "They are the Five Elements." },
+          { actor: "lina", expression: "thinking", text: "All five..." },
+          { actor: "lina", expression: "thinking", text: "ended up near the bridge?" },
+          { actor: "momo", expression: "thinking", text: "Looks that way." },
+          { actor: "mei", expression: "thinking", text: "Bring them to the Memory Bridge." },
+          { actor: "mei", expression: "thinking", text: "Let us see what happens." }
         ]
       });
     }
@@ -1468,9 +1538,10 @@ function collectPickup(item) {
     startDialogue({
       actor: "momo",
       lines: [
-        { actor: "momo", expression: "surprised", text: "A hidden 月 spirit. It must have been waiting in the old roof's shadow." },
-        { actor: "lina", expression: "thinking", text: "So 月 is not just a shape. It carries the moon's meaning." },
-        { actor: "momo", expression: "happy", text: "Exactly. 月 means moon. When you know the meaning, the spirit knows where to shine." }
+        { actor: "lina", expression: "thinking", text: "What is this one?" },
+        { actor: "momo", expression: "thinking", text: "月." },
+        { actor: "momo", expression: "happy", text: "Moon." },
+        { actor: "momo", expression: "thinking", text: "Keep it. It may matter later." }
       ]
     });
   }
@@ -1562,11 +1633,12 @@ function startBossBattle(enemy) {
       startDialogue({
         actor: "wuyin",
         lines: [
-          { actor: "wuyin", expression: "angry", text: "A novice monk should not wake a seal that old." },
-          { actor: "mei", expression: "surprised", text: "The seal in his staff... I thought that craft was lost before I was born." },
-          { actor: "lina", expression: "thinking", text: "Master Yun, why did it sound like my own voice?" },
-          { actor: "momo", expression: "sad", text: "Because someone did not steal the words. Someone sealed them inside people." },
-          { actor: "narrator", expression: "thinking", text: "Far beyond the village, a second bell wakes under the forest." }
+          { actor: "wuyin", expression: "angry", text: "You should have left the bell alone." },
+          { actor: "lina", expression: "thinking", text: "Who are you?" },
+          { actor: "wuyin", expression: "angry", text: "Someone who remembers what this village forgot." },
+          { actor: "momo", expression: "thinking", text: "Xiao Wu..." },
+          { actor: "momo", expression: "thinking", text: "That did not sound like the end." },
+          { actor: "narrator", expression: "thinking", text: "Far beyond the forest, another bell answers." }
         ]
       });
     }
@@ -1654,9 +1726,10 @@ function resolveBattleOption(option) {
       startDialogue({
         actor: "momo",
         lines: [
-          { actor: "momo", expression: "surprised", text: "That thing was feeding on a broken word." },
-          { actor: "lina", expression: "thinking", text: "Master Yun said this monk staff was only for balance. Why did it answer 火?" },
-          { actor: "momo", expression: "confident", text: "Because your staff carries a blank seal. Each character you understand gives the seal a new move." }
+          { actor: "momo", expression: "surprised", text: "It disappeared." },
+          { actor: "lina", expression: "thinking", text: "My staff answered 火." },
+          { actor: "momo", expression: "thinking", text: "Then the staff is not just a staff." },
+          { actor: "momo", expression: "happy", text: "We can worry about that after we are not being attacked." }
         ]
       });
     }
@@ -1700,7 +1773,7 @@ function interact() {
     return rectsTouch(playerBox, { x: pos.x, y: pos.y, w: 42, h: 68 }, 38);
   });
   if (npc) {
-    startDialogue(npc);
+    startDialogue(npc.id === "mei" ? getMasterYunDialogue() : npc);
     return;
   }
 
@@ -1787,7 +1860,23 @@ function buyMomo() {
     openMomoPicker();
     return;
   }
-  openMomoPicker();
+  startDialogue({
+    actor: "narrator",
+    onClose: openMomoPicker,
+    lines: [
+      { actor: "narrator", expression: "thinking", text: "The little shop smells of ink and old paper." },
+      { actor: "narrator", expression: "thinking", text: "Everything is quiet." },
+      { actor: "narrator", expression: "thinking", text: "Too quiet." },
+      { actor: "narrator", expression: "thinking", text: "Three small ink charms begin to glow." },
+      { actor: "momo", expression: "thinking", text: "..." },
+      { actor: "momo", expression: "surprised", text: "Finally." },
+      { actor: "momo", expression: "thinking", text: "Do you know how boring it is to sit on a shelf all day?" },
+      { actor: "lina", expression: "thinking", text: "You are alive?" },
+      { actor: "momo", expression: "confident", text: "Obviously." },
+      { actor: "momo", expression: "happy", text: "Go on." },
+      { actor: "momo", expression: "happy", text: "Pick one." }
+    ]
+  });
 }
 
 function openMomoPicker() {
@@ -1814,10 +1903,15 @@ function chooseMomoColor(colorId) {
     { actor: "narrator", expression: "thinking", text: "Momo hops between the color charms and settles into a new glow." },
     { actor: "momo", expression: "happy", text: `${chosen.label} it is. I like this look.` }
   ] : [
-    { actor: "narrator", expression: "thinking", text: "On the lowest shelf sits a row of tiny ink charms, each glowing with a different color." },
-    { actor: "momo", expression: "surprised", text: `${chosen.label}? Good choice. I was beginning to think I would stay on this shelf forever.` },
-    { actor: "momo", expression: "happy", text: "I am Momo. I can follow you and help read the strange characters ahead." },
-    { actor: "mei", expression: "thinking", text: "Good. Now gather the five element spirits: 金, 木, 水, 火, 土." }
+    { actor: "momo", expression: "happy", text: "Nice choice." },
+    { actor: "momo", expression: "happy", text: "I look much better now." },
+    { actor: "lina", expression: "thinking", text: "Who are you?" },
+    { actor: "momo", expression: "confident", text: "Momo." },
+    { actor: "momo", expression: "thinking", text: "I know old characters." },
+    { actor: "momo", expression: "thinking", text: "You do not." },
+    { actor: "momo", expression: "happy", text: "So..." },
+    { actor: "momo", expression: "happy", text: "looks like we are traveling together." },
+    { actor: "narrator", expression: "thinking", text: "Momo joined your party!" }
   ];
   startDialogue({
     actor: "momo",
@@ -1844,11 +1938,15 @@ function startPinyinIntro() {
   startDialogue({
     actor: "momo",
     lines: [
-      { actor: "momo", expression: "thinking", text: "The valley is too quiet. Even the wind is mouthing symbols." },
-      { actor: "villager", expression: "thinking", text: "The animals... the flowers... all sealed inside silent light." },
-      { actor: "momo", expression: "surprised", text: "Pinyin is sound magic here. Every sound you learn can free one living thing." },
-      { actor: "lina", expression: "thinking", text: "So learning ma could bring back 马, and learning yu could bring back 鱼?" },
-      { actor: "momo", expression: "happy", text: "Yes. We are not just answering questions. We are returning life to the village." }
+      { actor: "momo", expression: "thinking", text: "This valley should not be this quiet." },
+      { actor: "villager", expression: "thinking", text: "..." },
+      { actor: "lina", expression: "thinking", text: "They cannot speak." },
+      { actor: "momo", expression: "thinking", text: "Not just people." },
+      { actor: "momo", expression: "thinking", text: "Look there." },
+      { actor: "momo", expression: "surprised", text: "The animals are sealed too." },
+      { actor: "lina", expression: "thinking", text: "How do we open them?" },
+      { actor: "momo", expression: "thinking", text: "Pinyin." },
+      { actor: "momo", expression: "thinking", text: "If we get the sound right, the seal should break." }
     ]
   });
 }
@@ -2106,9 +2204,13 @@ function startLakeHomeInteraction() {
       actor: "momo",
       onClose: enterLakeHome,
       lines: [
-        { actor: "momo", expression: "thinking", text: "Look, Xiao Wu. There is an empty house by the lake." },
-        { actor: "momo", expression: "happy", text: "Maybe this can become our home between journeys." },
-        { actor: "narrator", expression: "thinking", text: "The quiet house opens. A new kind of space waits inside." }
+        { actor: "momo", expression: "thinking", text: "Xiao Wu." },
+        { actor: "momo", expression: "thinking", text: "This house is empty." },
+        { actor: "lina", expression: "thinking", text: "Does anyone live here?" },
+        { actor: "momo", expression: "thinking", text: "Not anymore." },
+        { actor: "momo", expression: "happy", text: "Which means..." },
+        { actor: "momo", expression: "happy", text: "maybe we can." },
+        { actor: "narrator", expression: "thinking", text: "The old door opens." }
       ]
     });
     return;
@@ -2145,8 +2247,8 @@ function interactInterior() {
       y: 334,
       r: 84,
       lines: [
-        { actor: "narrator", expression: "thinking", text: "A simple bed. The lake wind makes the blanket smell faintly of rain." },
-        { actor: "momo", expression: "happy", text: "This feels like a good place to rest between lessons." }
+        { actor: "narrator", expression: "thinking", text: "A simple bed." },
+        { actor: "momo", expression: "happy", text: "Finally. A place to stop standing." }
       ]
     },
     {
@@ -2155,8 +2257,9 @@ function interactInterior() {
       y: 330,
       r: 92,
       lines: [
-        { actor: "narrator", expression: "thinking", text: "A low writing desk waits by the wall. There is room for new character notes." },
-        { actor: "momo", expression: "thinking", text: "Later, we can turn this into a study corner." }
+        { actor: "narrator", expression: "thinking", text: "A low writing desk." },
+        { actor: "momo", expression: "thinking", text: "Good for notes." },
+        { actor: "momo", expression: "happy", text: "And snacks." }
       ]
     },
     {
@@ -2165,8 +2268,8 @@ function interactInterior() {
       y: 286,
       r: 72,
       lines: [
-        { actor: "narrator", expression: "thinking", text: "A clear bowl reflects the lake outside." },
-        { actor: "momo", expression: "happy", text: "The fish words we learned seem brighter here." }
+        { actor: "narrator", expression: "thinking", text: "A clear water bowl." },
+        { actor: "momo", expression: "thinking", text: "The lake is visible from here." }
       ]
     }
   ];
@@ -2175,7 +2278,7 @@ function interactInterior() {
     startDialogue({ actor: "momo", lines: spot.lines });
     return;
   }
-  showToast("This house is quiet. There is room to build more.");
+  showToast("The house is quiet.");
 }
 
 function startPinyinBoss() {
@@ -2248,11 +2351,15 @@ function startPinyinBoss() {
       startDialogue({
         actor: "momo",
         lines: [
-          { actor: "shadow", expression: "thinking", text: "I sealed the voices because I feared they would vanish again..." },
-          { actor: "momo", expression: "happy", text: `They came back because Xiao Wu learned their sounds: ${helpers}.` },
-          { actor: "villager", expression: "happy", text: "The bird sings. The cat calls. The horse runs. The valley is alive again." },
-          { actor: "momo", expression: "thinking", text: `A 云 seal appeared near the restored gate. 云 is yún: cloud. It can teach Cloud Riding for ${CLOUD_RIDE_COST} coins, only if you want it.` },
-          { actor: "momo", expression: "happy", text: "The next road is open when you are ready." }
+          { actor: "shadow", expression: "thinking", text: "I only wanted the valley to stay quiet." },
+          { actor: "lina", expression: "thinking", text: "Quiet is not the same as safe." },
+          { actor: "momo", expression: "happy", text: `The voices came back: ${helpers}.` },
+          { actor: "villager", expression: "happy", text: "The bird is singing." },
+          { actor: "villager", expression: "happy", text: "The river has sound again." },
+          { actor: "momo", expression: "thinking", text: `A 云 seal appeared near the gate.` },
+          { actor: "momo", expression: "thinking", text: `云 is yún: cloud.` },
+          { actor: "momo", expression: "happy", text: `It can teach Cloud Riding for ${CLOUD_RIDE_COST} coins.` },
+          { actor: "momo", expression: "thinking", text: "Only if you want it." }
         ]
       });
     }
@@ -2274,8 +2381,9 @@ function startCloudSealDialogue() {
     startDialogue({
       actor: "momo",
       lines: [
-        { actor: "narrator", expression: "thinking", text: "The 云 seal drifts softly beside the restored gate." },
-        { actor: "momo", expression: "happy", text: "You already learned 云: yún, cloud. Press J whenever you want to ride or land." }
+        { actor: "narrator", expression: "thinking", text: "The 云 seal floats quietly." },
+        { actor: "momo", expression: "happy", text: "You already learned 云: yún, cloud." },
+        { actor: "momo", expression: "thinking", text: "Press J to ride or land." }
       ]
     });
     return;
@@ -2283,9 +2391,12 @@ function startCloudSealDialogue() {
   startDialogue({
     actor: "momo",
     lines: [
-      { actor: "narrator", expression: "thinking", text: "A pale seal floats inside the mist. The character on it is 云." },
-      { actor: "momo", expression: "thinking", text: "云 is yún. It means cloud." },
-      { actor: "momo", expression: "happy", text: `If you want Cloud Riding, stand beside this 云 seal and press J again. It costs ${CLOUD_RIDE_COST} coins.` }
+      { actor: "narrator", expression: "thinking", text: "A pale seal floats in the mist." },
+      { actor: "momo", expression: "thinking", text: "The character is 云." },
+      { actor: "momo", expression: "thinking", text: "云 is yún." },
+      { actor: "momo", expression: "happy", text: "It means cloud." },
+      { actor: "momo", expression: "thinking", text: `Press J again to learn Cloud Riding.` },
+      { actor: "momo", expression: "thinking", text: `It costs ${CLOUD_RIDE_COST} coins.` }
     ]
   });
 }
@@ -2304,9 +2415,12 @@ function unlockCloudRide() {
     actor: "momo",
     onClose: startCloudLakeTransition,
     lines: [
-      { actor: "narrator", expression: "thinking", text: `The 云 seal accepts ${CLOUD_RIDE_COST} coins and unfolds into a soft white cloud.` },
+      { actor: "narrator", expression: "thinking", text: `The 云 seal takes ${CLOUD_RIDE_COST} coins.` },
+      { actor: "narrator", expression: "thinking", text: "A small cloud unfolds under Xiao Wu's feet." },
       { actor: "momo", expression: "happy", text: "You learned 云: yún, cloud." },
-      { actor: "momo", expression: "confident", text: "Cloud Riding unlocked. The cloud will carry us to the lake beyond the valley." }
+      { actor: "momo", expression: "confident", text: "Cloud Riding unlocked." },
+      { actor: "momo", expression: "thinking", text: "There is a lake beyond the valley." },
+      { actor: "momo", expression: "happy", text: "Let us see where this cloud goes." }
     ]
   });
 }
@@ -2428,9 +2542,11 @@ function startCloudLakeIntro() {
   startDialogue({
     actor: "momo",
     lines: [
-      { actor: "momo", expression: "happy", text: "We made it to Cloud Lake. Let's sit down and fish." },
-      { actor: "momo", expression: "thinking", text: "Stand near the chair and press Space to cast the rod. Whatever you catch will show its character and pinyin." },
-      { actor: "momo", expression: "confident", text: "You cannot walk straight across the lake. Press J to ride the cloud if you need to cross the water." }
+      { actor: "momo", expression: "thinking", text: "Cloud Lake." },
+      { actor: "momo", expression: "thinking", text: "It is quieter than I expected." },
+      { actor: "momo", expression: "happy", text: "There is a chair by the water." },
+      { actor: "momo", expression: "thinking", text: "Stand near it and press Space to fish." },
+      { actor: "momo", expression: "thinking", text: "If you need to cross the lake, press J." }
     ]
   });
 }
@@ -2482,8 +2598,10 @@ function startLakeCloudHint() {
   startDialogue({
     actor: "momo",
     lines: [
-      { actor: "momo", expression: "thinking", text: "This is lake water. We cannot walk through it." },
-      { actor: "momo", expression: "confident", text: "Press J to ride the cloud across the surface." }
+      { actor: "momo", expression: "thinking", text: "That is water." },
+      { actor: "momo", expression: "thinking", text: "We cannot walk across it." },
+      { actor: "momo", expression: "confident", text: "Press J." },
+      { actor: "momo", expression: "confident", text: "Use the cloud." }
     ]
   });
 }
@@ -2504,26 +2622,56 @@ function completeFishingCatch() {
   };
   saveGame({ quiet: true });
   const lines = [
-    { actor: "momo", expression: "happy", text: `Congratulations! You caught ${caught.english}: ${caught.glyph} (${caught.pinyin}).` }
+    { actor: "momo", expression: "happy", text: `You caught ${caught.english}: ${caught.glyph} (${caught.pinyin}).` }
   ];
   if (caught.id === "worm") {
     lines.push({
       actor: "momo",
       expression: "thinking",
-      text: "A worm is useful bait, but it is not a lake word yet. Try fishing again."
+      text: "A worm."
+    });
+    lines.push({
+      actor: "momo",
+      expression: "happy",
+      text: "Useful. But not what we came for."
+    });
+    lines.push({
+      actor: "momo",
+      expression: "thinking",
+      text: "Try again."
     });
   } else if (lakeWordsComplete && !world.chapter.lake.homeBuilt) {
     lines.push({
       actor: "momo",
       expression: "confident",
-      text: "Great work. The lake words are awake now. Press J to ride the cloud across Cloud Lake and look for the empty house."
+      text: "That should be enough."
+    });
+    lines.push({
+      actor: "momo",
+      expression: "thinking",
+      text: "The lake feels awake now."
+    });
+    lines.push({
+      actor: "momo",
+      expression: "confident",
+      text: "Press J and cross the water."
+    });
+    lines.push({
+      actor: "momo",
+      expression: "thinking",
+      text: "I saw an empty house on the far shore."
     });
     if (!completedFishingQuest) showToast("Cloud Lake is ready. Ride the cloud across.");
   } else {
     lines.push({
       actor: "momo",
       expression: "thinking",
-      text: `${lakeWordCount} lake word${lakeWordCount === 1 ? "" : "s"} awakened. Keep fishing until the lake gives up all its words.`
+      text: `${lakeWordCount} lake word${lakeWordCount === 1 ? "" : "s"} awakened.`
+    });
+    lines.push({
+      actor: "momo",
+      expression: "thinking",
+      text: "Keep fishing."
     });
   }
   startDialogue({
@@ -2544,8 +2692,8 @@ function startBridgePuzzle() {
     startDialogue({
       actor: "mei",
       lines: [
-        { actor: "mei", expression: "thinking", text: "The bridge refuses you. It is waiting for five voices, not one." },
-        { actor: "momo", expression: "thinking", text: "It needs 金, 木, 水, 火, and 土 before it can open." }
+        { actor: "momo", expression: "thinking", text: "Still asleep." },
+        { actor: "momo", expression: "thinking", text: "Looks like we are missing something." }
       ]
     });
     return;
@@ -2602,7 +2750,7 @@ function startBridgePuzzle() {
     onComplete: () => {
       world.chapter.bridgeSolved = true;
       completeQuest("openForest");
-      setScene(5, "The Memory Bridge repairs itself.");
+      setScene(5, "The bridge begins to move.");
       startForestRoad();
     }
   });
@@ -2613,9 +2761,19 @@ function startForestRoad() {
   startDialogue({
     actor: "mei",
     lines: [
-      { actor: "mei", expression: "happy", text: "The bridge is open. Beyond it waits Wuxing Forest." },
-      { actor: "momo", expression: "thinking", text: "The forest path is quiet. Something is hiding the next word spirit." },
-      { actor: "mei", expression: "thinking", text: "Cross carefully. The five elements will guide you there." }
+      { actor: "narrator", expression: "thinking", text: "The five characters rise into the air." },
+      { actor: "narrator", expression: "thinking", text: "One by one, they return to the old stone bridge." },
+      { actor: "narrator", expression: "thinking", text: "..." },
+      { actor: "narrator", expression: "thinking", text: "Creak." },
+      { actor: "lina", expression: "thinking", text: "It opened." },
+      { actor: "momo", expression: "happy", text: "See?" },
+      { actor: "momo", expression: "happy", text: "Characters always know where they belong." },
+      { actor: "mei", expression: "thinking", text: "Beyond this bridge is Wuxing Forest." },
+      { actor: "mei", expression: "thinking", text: "No one has entered since the bell rang." },
+      { actor: "momo", expression: "thinking", text: "Stay close." },
+      { actor: "lina", expression: "thinking", text: "Because it is dangerous?" },
+      { actor: "momo", expression: "thinking", text: "..." },
+      { actor: "momo", expression: "happy", text: "Because you will get lost without me." }
     ]
   });
 }
@@ -2670,8 +2828,9 @@ function startIncident() {
     startDialogue({
       actor: "momo",
       lines: [
-        { actor: "momo", expression: "thinking", text: "The shrine is sealed. The air around it feels heavy." },
-        { actor: "lina", expression: "thinking", text: "We should return after the village lights are awake." }
+        { actor: "momo", expression: "thinking", text: "The shrine is shut." },
+        { actor: "lina", expression: "thinking", text: "Can we open it?" },
+        { actor: "momo", expression: "thinking", text: "Not yet." }
       ]
     });
     return;
@@ -2688,10 +2847,12 @@ function startIncident() {
   startDialogue({
     actor: "wuyin",
     lines: [
-        { actor: "narrator", expression: "thinking", text: "The sealed bell rings without being touched." },
-      { actor: "momo", expression: "surprised", text: "That sound is not from the bell. Something is inside it." },
-      { actor: "wuyin", expression: "angry", text: "Return the spirits, little monk. The village was quieter before you listened." },
-      { actor: "mei", expression: "angry", text: "Xiao Wu, to the sealed shrine. Do not let it swallow the bell's name." }
+      { actor: "narrator", expression: "thinking", text: "The bell rings again." },
+      { actor: "momo", expression: "surprised", text: "Xiao Wu." },
+      { actor: "momo", expression: "surprised", text: "Something came out." },
+      { actor: "wuyin", expression: "angry", text: "Put them back, little monk." },
+      { actor: "mei", expression: "angry", text: "To the shrine." },
+      { actor: "mei", expression: "angry", text: "Now." }
     ]
   });
 }
@@ -3159,12 +3320,26 @@ function beginOpeningIfNeeded(loadedSave) {
     name: "Narrator",
     onClose: () => {
       world.chapter.openingDone = true;
-      showToast("Find Master Yun, then visit Momo Mart.");
+      showToast("Go to Momo Mart.");
       saveGame({ quiet: true });
     },
     lines: [
-      { actor: "narrator", expression: "thinking", text: "Morning in the village. Xiao Wu has just come down from the monastery." },
-      { actor: "mei", expression: "thinking", text: "Master Yun is waiting nearby. He has one simple errand before the journey begins." }
+      { actor: "narrator", expression: "thinking", text: "A peaceful morning in Inkstone Village." },
+      { actor: "narrator", expression: "thinking", text: "The temple bell should only ring at sunrise." },
+      { actor: "narrator", expression: "thinking", text: "Last night..." },
+      { actor: "narrator", expression: "thinking", text: "it rang by itself." },
+      { actor: "mei", expression: "thinking", text: "Xiao Wu." },
+      { actor: "mei", expression: "thinking", text: "You are here." },
+      { actor: "mei", expression: "thinking", text: "Good." },
+      { actor: "mei", expression: "thinking", text: "Did you hear the bell last night?" },
+      { actor: "lina", expression: "thinking", text: "No." },
+      { actor: "mei", expression: "thinking", text: "That is the strange part." },
+      { actor: "mei", expression: "thinking", text: "Everyone else did." },
+      { actor: "mei", expression: "thinking", text: "Since then..." },
+      { actor: "mei", expression: "thinking", text: "something in the village feels wrong." },
+      { actor: "mei", expression: "thinking", text: "Before we investigate, go to Momo Mart." },
+      { actor: "mei", expression: "thinking", text: "Wake the little ink spirit." },
+      { actor: "mei", expression: "thinking", text: "You will need a companion." }
     ]
   });
 }
